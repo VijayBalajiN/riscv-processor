@@ -2,6 +2,7 @@
 #include <fstream>  // For ifstream
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 using namespace std;
 
@@ -14,7 +15,9 @@ void readNext(ifstream& file, string& check, char delim){
     readSpace(file);
     getline(file, check, delim);
 }
-vector<string> get_code(string filename){
+
+
+tuple<vector<string>, vector<string> > get_code(string filename){
     vector<string> bin_instruc, instructions;
 
     ifstream file;
@@ -39,5 +42,5 @@ vector<string> get_code(string filename){
         cout << instruc << "\n";
     }
 
-    return (bin_instruc, instructions);
+    return make_tuple(bin_instruc, instructions);
 }

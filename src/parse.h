@@ -3,4 +3,4 @@
 
 using namespace std;
 
-vector<string> get_code(string filename);
+tuple<vector<string>, vector<string>> get_code(string filename);

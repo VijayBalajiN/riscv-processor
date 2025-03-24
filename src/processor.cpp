@@ -30,10 +30,11 @@ Processor::Processor(string filename) {
 }
 
 void Processor::run() {
-    for (; clock <= 5; clock++) {
+    for (; clock <= 8; clock++) {
         latch_set();
-        run_if();
+        
         run_id();
+        run_if();
         run_ex();
         run_m();
         run_wb();
@@ -57,12 +58,31 @@ void Processor::latch_set () {
 }
 
 void Processor::run_if() {
+    
     unsigned int line = latch_if_r.line;
+
     string instruc_hex = bin_instruc[line/4];
 
 
+    string start_instruc = "";
 
-    unsigned int instruc_dec = stoi(instruc_hex, nullptr, 16);
+    if (if_stall == 0) {
+        for (int i = 1; i < clock; i++) {
+            start_instruc += " ;";
+        }
+    } 
+
+    pretty_instruc[line/4].append(";"+start_instruc+"IF");
+
+    if (id_stall == 1) {
+        if_stall = 1;
+        return;
+    } else {
+        if_stall = 0;
+    }
+
+
+    unsigned int instruc_dec = stoul(instruc_hex, nullptr, 16);
 
 
     bitset<32> instruc_bin(instruc_dec);
@@ -73,7 +93,8 @@ void Processor::run_if() {
     string funct3_str = instruc.substr(17, 3);  // funct3 [12:14]
     string rs1_str = instruc.substr(12, 5);     // rs1 [15:19]
     string rs2_str = instruc.substr(7, 5);      // rs2 [20:24]
-    string funct7_str = instruc.substr(0, 7);   // funct7 [25:31]
+    string funct7_str = instruc.substr(0, 7); 
+
 
     unsigned int opcode = stoi(opcode_str, nullptr, 2);
     unsigned int rd = stoi(rd_str, nullptr, 2);
@@ -174,12 +195,7 @@ void Processor::run_if() {
             assert(0);
     }
 
-    string start_instruc = "";
-    for (int i = 1; i < clock; i++) {
-        start_instruc += " ;";
-    }
-
-    pretty_instruc[line/4].append(";"+start_instruc+"IF");
+    
 
     latch_if_l.line += 4;
 
@@ -190,9 +206,16 @@ void Processor::run_id () {
     unsigned int opcode = latch_id_r.control.opcode;
     unsigned int squash = latch_id_r.control.squash;
 
+    int stall_check = stall_detector();
+
     latch_ex_l = {
         latch_id_r.control
     };
+
+    if (stall_check) {
+        id_stall = 1;
+        latch_ex_l.control.squash = 1;
+    } else id_stall = 0;
 
     if (squash) {
         return;

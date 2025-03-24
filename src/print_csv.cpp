@@ -36,8 +36,12 @@ string trim(string s){
 
 void print_csv(vector <string> v){
     fstream file;
-    file.open("output.csv");
-    int length = count(v[0].begin(),v[0].end(), ';')+1;
+    file.open("build/output.csv");
+    int length = 0;
+
+    for (int i = 0; i < v.size(); i++) {
+        length =((count(v[i].begin(),v[i].end(), ';')+1) > length ? (count(v[i].begin(),v[i].end(), ';')+1) : length);
+    }
     // cout << length;
     for (int i=0; i<length; i++){
         if (i==0){file << "Instruction Number,";}

@@ -59,7 +59,7 @@ void print_csv(vector <string> v){
         stringstream ss;
         ss <<data;
         string temp;
-        while (getline(ss, temp, ';')){
+        while (getline(ss, temp, ';')){ 
             temp=trim(temp);
             if (temp ==""){
                 file << "-";

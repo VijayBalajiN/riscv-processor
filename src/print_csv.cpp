@@ -56,10 +56,10 @@ void print_csv(vector <string> v){
         stringstream ss;
         ss <<data;
         string temp;
-        bool first=true;
+        // bool first=true;
         while (getline(ss, temp, ';')){
-            if (! first){file << ",";}
-            else {first =false;}
+            // if (! first){file << ",";}
+            // else {first =false;}
             temp=trim(temp);
             if (temp ==""){
                 file << "-";
@@ -67,7 +67,9 @@ void print_csv(vector <string> v){
             else{
                 file << temp;
             }
+            file << ";";
         }
         file << '\n';
     }
 }
+

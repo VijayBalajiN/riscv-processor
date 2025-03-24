@@ -8,6 +8,7 @@
 #include <iostream>
 #include <assert.h>
 #include "parse.h"
+#include "print_csv.h"
 
 using namespace std;
 

@@ -1,3 +1,9 @@
-Instruction Number,C1,C2,C3,C4,C5,C6,C7,
-hello,how are you,are you fine,-,I am fine,-,-,How are you
-hi,my,name is vijay,-,what is your name
+Instruction Number,C1,C2,C3,C4,C5,
+addi x5 x0 0,IF,ID,EX,MEM,WB
+add x6 x5 x10,-,IF,ID,EX,MEM
+lb x6 0 x6,-,-,IF,ID,EX
+beq x6 x0 12,-,-,-,IF,ID
+addi x5 x5 1,-,-,-,-,IF
+jal x0 -16
+addi x10 x5 0
+jalr x0 x1 0

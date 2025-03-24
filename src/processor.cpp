@@ -38,6 +38,7 @@ void Processor::run() {
         run_m();
         run_wb();
     }
+    print_csv(pretty_instruc);
 }
 
 void Processor::print () {

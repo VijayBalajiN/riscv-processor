@@ -1,4 +1,3 @@
-// #include <bits/stdc++.h>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -67,11 +66,4 @@ void print_csv(vector <string> v){
         }
         file << '\n';
     }
-}
-
-int main(){
-    vector <string> v;
-    v.push_back("hello;how are you;are you fine; ; I am fine ;  ;;How are you");
-    v.push_back("hi; my ;name is vijay;;what is your name;");
-    print_csv(v);
 }

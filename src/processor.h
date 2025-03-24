@@ -40,12 +40,10 @@ typedef struct latch_id {
 
 typedef struct latch_ex {
     control_signals control;
-    int alu_output;
 }latch_ex ;
 
 typedef struct latch_m {
     control_signals control;
-    int mem_output;
 }latch_m;
 
 typedef struct latch_wb {
@@ -79,6 +77,9 @@ protected:
     void latch_set();
     void run_if();
     void run_id();
+    void run_ex();
+    void run_m();
+    void run_wb();
     virtual int stall_detector();
 };
 

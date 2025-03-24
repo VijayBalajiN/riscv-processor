@@ -30,10 +30,13 @@ Processor::Processor(string filename) {
 }
 
 void Processor::run() {
-    for (; clock <= 2; clock++) {
+    for (; clock <= 5; clock++) {
         latch_set();
         run_if();
         run_id();
+        run_ex();
+        run_m();
+        run_wb();
     }
 }
 
@@ -121,8 +124,52 @@ void Processor::run_if() {
             };
             break;
         }
+        case 99: {
+            control_signals control_signal = {
+                line, 0, rs2, rs1, funct3, 0, opcode, 0, 0
+            };
+
+            latch_id_l = {
+                control_signal
+            };
+            break;
+            
+        }
+        case 55: {
+            control_signals control_signal = {
+                line, 0, 0, 0, 0, rd, opcode, 0, 0
+            };
+            latch_id_l = {
+                control_signal
+            };
+            break;
+        } 
+        case 111: {
+            string immed_str_20 = instruc.substr(0, 1);
+            string immed_str_10_1 = instruc.substr(1, 10);
+            string immed_str_11 = instruc.substr(12, 1);
+            string immed_str_19_12 = instruc.substr(13, 8);
+
+            unsigned int immed_20 = stoi(immed_str_20, nullptr, 2);
+            unsigned int immed_10_1 = stoi(immed_str_10_1, nullptr, 2);
+            unsigned int immed_11 = stoi(immed_str_11, nullptr, 2);
+            unsigned int immed_19_12 = stoi(immed_str_19_12, nullptr, 2);
+
+            unsigned int immed = (immed_10_1 << 1) | (immed_11 << 11) | 
+                        (immed_19_12 << 12) | (immed_20 << 20);
+
+            control_signals control_signal = {
+                line, 0, 0, 0, 0, rd, opcode, immed, 0
+            };
+
+            latch_id_l = {
+                control_signal
+            };
+            break;
+        }
         default:
-            printf("Incorrect Opcode");
+            printf("Incorrect Opcode %d %d\n", opcode, line);
+            
             assert(0);
     }
 
@@ -142,10 +189,59 @@ void Processor::run_id () {
     unsigned int opcode = latch_id_r.control.opcode;
     unsigned int squash = latch_id_r.control.squash;
 
-    if (squash) return;
+    latch_ex_l = {
+        latch_id_r.control
+    };
+
+    if (squash) {
+        return;
+    }
 
     pretty_instruc[line/4].append(";ID");
 }
+
+void Processor::run_ex () {
+    unsigned int line = latch_ex_r.control.line;
+    unsigned int squash = latch_ex_r.control.squash;
+
+    latch_m_l = {
+        latch_ex_r.control
+    };
+
+    if (squash) {
+        return;
+    }
+
+    pretty_instruc[line/4].append(";EX");
+}
+
+void Processor::run_m () {
+    unsigned int line = latch_m_r.control.line;
+    unsigned int squash = latch_m_r.control.squash;
+
+    latch_wb_l = {
+        latch_m_r.control
+    };
+
+    if (squash) {
+        return;
+    }
+
+    pretty_instruc[line/4].append(";MEM");
+}
+
+void Processor::run_wb () {
+    unsigned int line = latch_wb_r.control.line;
+    unsigned int squash = latch_wb_r.control.squash;
+
+
+    if (squash) {
+        return;
+    }
+
+    pretty_instruc[line/4].append(";WB");
+}
+
 
 int Processor::stall_detector() {
     // Default implementation

@@ -1,7 +1,5 @@
 #include "processor.h"
 
-
-
 class Processor_NonForwarding : public Processor {
 public:
     int stall_detector() override {

@@ -4,6 +4,8 @@
 #include <vector>
 #include <tuple>
 
+#include "parse.h"
+
 using namespace std;
 
 void readSpace(ifstream& file){

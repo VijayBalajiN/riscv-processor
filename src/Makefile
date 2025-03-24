@@ -1,4 +1,4 @@
-nonforwarding: parse.o processor.o nonforwarding.o
+build/nonforwarding: parse.o processor.o nonforwarding.o
 	clang++ -std=c++17 -g -fstandalone-debug  build/parse.o build/print_csv.o build/processor.o build/nonforwarding.o -o build/nonforwarding
 
 nonforwarding.o: nonforwarding.cpp build/processor.o
@@ -16,6 +16,9 @@ parse.o: parse.cpp
 print_csv.o: print_csv.cpp
 	clang++ -std=c++17 -g -fstandalone-debug -c print_csv.cpp -o print_csv.o
 	mv print_csv.o build/print_csv.o
+
+run: build/nonforwarding
+	build/nonforwarding
 
 clean:
 	rm -rf parse *.o nonforwarding forwarding build/*

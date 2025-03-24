@@ -4,6 +4,7 @@
 #include <tuple>
 #include <assert.h>
 #include <bitset>
+#include <iostream>
 
 using namespace std;
 
@@ -72,8 +73,19 @@ class Processor {
     }
 
     void run() {
-        latch_set();
-        run_if();
+        
+
+        for (; clock <= 2; clock++) {
+            latch_set();
+            run_if();
+            run_id();
+        }
+    }
+
+    void print () {
+        for (auto &a : pretty_instruc) {
+            cout << a << "\n";
+        }
     }
 
     private:
@@ -88,7 +100,7 @@ class Processor {
     int id_stall = 0;
     int if_stall = 0;
 
-    int clock = 0;
+    int clock = 1;
 
     latch_if latch_if_l, latch_if_r;
     latch_id latch_id_l, latch_id_r;
@@ -105,7 +117,7 @@ class Processor {
     }
 
     void run_if() {
-        unsigned int line = latch_if_l.line;
+        unsigned int line = latch_if_r.line;
         string instruc_hex = bin_instruc[line/4];
 
     
@@ -130,7 +142,7 @@ class Processor {
         unsigned int rs2 = stoi(rs2_str, nullptr, 2);
         unsigned int funct7 = stoi(funct7_str, nullptr, 2);
 
-        printf("Opcode: %d, Rd: %d, Funct3: %d, Rs1: %d, Rs2: %d, Funct7: %d", opcode, rd, funct3, rs1, rs2, funct7);
+        
 
 
         switch (opcode) {
@@ -178,15 +190,25 @@ class Processor {
                 assert(0);
         }
 
-        pretty_instruc[line/4].append(", "+to_string(clock));
+        string start_instruc = "";
+        for (int i = 1; i < clock; i++) {
+            start_instruc += " ;";
+        }
+
+        pretty_instruc[line/4].append(";"+start_instruc+"IF");
+
+        latch_if_l.line += 4;
+
     }
 
     void run_id () {
         unsigned int line = latch_id_r.control.line;
         unsigned int opcode = latch_id_r.control.opcode;
+        unsigned int squash = latch_id_r.control.squash;
 
+        if (squash) return;
 
-        // switch (opcode) 
+        pretty_instruc[line/4].append(";ID");
     }
 };
 
@@ -198,4 +220,5 @@ int main () {
 
     Processor processor("../inputfiles/strlen.txt");
     processor.run();
+    processor.print();   
 }

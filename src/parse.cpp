@@ -34,13 +34,6 @@ tuple<vector<string>, vector<string> > get_code(string filename){
         instructions.push_back(check3);
     }
 
-    for (string instruc: bin_instruc){
-        cout << instruc << "\n";
-    }
-
-    for (string instruc: instructions){
-        cout << instruc << "\n";
-    }
 
     return make_tuple(bin_instruc, instructions);
 }

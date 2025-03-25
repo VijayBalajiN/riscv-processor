@@ -50,7 +50,7 @@ void print_csv(vector <string> v){
     for (int i=0; i<length; i++){
         if (i==0){file << "Instruction Number,";}
         else{
-            file << "C" << i << ",";
+            file << "C" << i-1 << ",";
         }
     }
     file << "\n";

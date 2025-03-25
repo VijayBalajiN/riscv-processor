@@ -34,7 +34,7 @@ Processor::Processor(string filename) {
 }
 
 void Processor::run() {
-    for (; clock <= 14; clock++) {
+    for (; clock <= 16; clock++) {
         latch_set();
         
         run_id();
@@ -48,7 +48,7 @@ void Processor::run() {
 }
 
 void Processor::print () {
-    for (auto &a : pretty_instruc) {
+    for (const auto &a : pretty_instruc) {
         cout << a << "\n";
     }
 }
@@ -71,20 +71,17 @@ void Processor::run_if() {
 
     string start_instruc = "";
 
-    if (if_stall == 0) {
-        for (int i = 1; i < clock-clock_end[line/4]; i++) {
-            start_instruc += " ;";
-        }
-    } 
+    
+    for (int i = 1; i < clock-clock_end[line/4]; i++) {
+        start_instruc += " ;";
+    }
+   
 
     pretty_instruc[line/4].append(";"+start_instruc+"IF");
     clock_end[line/4] = clock;
 
     if (id_stall == 1) {
-        if_stall = 1;
         return;
-    } else {
-        if_stall = 0;
     }
 
 

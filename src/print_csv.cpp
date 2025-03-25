@@ -34,15 +34,18 @@ string trim(string s){
     return temp;
 }
 
+int count_char(string s, char delim){
+    return count(s.begin(), s.end(), delim);
+}
+
 void print_csv(vector <string> v){
-    fstream file;
-    file.open("build/output.csv");
+    ofstream file;
+    file.open("build/output.csv", ios::out | ios::trunc);
     int length = 0;
 
     for (int i = 0; i < v.size(); i++) {
-        length =((count(v[i].begin(),v[i].end(), ';')+1) > length ? (count(v[i].begin(),v[i].end(), ';')+1) : length);
+        length =((count_char(v[i], ';')+1) > length ? (count_char(v[i], ';')+1) : length);
     }
-    // cout << length;
     for (int i=0; i<length; i++){
         if (i==0){file << "Instruction Number,";}
         else{
@@ -56,10 +59,7 @@ void print_csv(vector <string> v){
         stringstream ss;
         ss <<data;
         string temp;
-        bool first=true;
-        while (getline(ss, temp, ';')){
-            if (! first){file << ",";}
-            else {first =false;}
+        while (getline(ss, temp, ';')){ 
             temp=trim(temp);
             if (temp ==""){
                 file << "-";
@@ -67,6 +67,7 @@ void print_csv(vector <string> v){
             else{
                 file << temp;
             }
+            file << ",";
         }
         file << '\n';
     }

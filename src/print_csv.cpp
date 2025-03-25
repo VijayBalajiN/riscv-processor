@@ -22,7 +22,8 @@ string trim(string s){
         }
     }
     while ( i<s.length()){
-        temp.push_back(s[i]);
+        
+        if(s[i]!='\n' && s[i]!='\r'){temp.push_back(s[i]);}
         i++;
     }
     for (int i=temp.length()-1; i>=0; i--){

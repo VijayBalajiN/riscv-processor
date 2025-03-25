@@ -34,7 +34,7 @@ Processor::Processor(string filename) {
 }
 
 void Processor::run() {
-    for (; clock <= 14; clock++) {
+    for (; clock <= 16; clock++) {
         latch_set();
         
         run_id();

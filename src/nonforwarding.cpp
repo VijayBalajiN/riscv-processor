@@ -10,7 +10,7 @@ public:
         unsigned int opcode = latch_id_r.control.opcode;
 
         switch (opcode) {
-            case 51: {
+            case 51: case 99: case 35: case 103: {
                 unsigned int rs1 = latch_id_r.control.rs1;
                 unsigned int rs2 = latch_id_r.control.rs1;
 

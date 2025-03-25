@@ -20,7 +20,7 @@ typedef struct control_signals {
     unsigned int funct3 : 3;
     unsigned int rd : 5;
     unsigned int opcode : 7;
-    unsigned int immed : 20;
+    unsigned int immed : 21;
     unsigned int squash : 1;
 
     control_signals(unsigned int line, unsigned int funct7, unsigned int rs2, 
@@ -64,6 +64,7 @@ protected:
 
     vector<string> bin_instruc;
     vector<string> pretty_instruc;
+    vector<int> clock_end;
 
     int id_stall;
     int if_stall;

@@ -27,17 +27,22 @@ Processor::Processor(string filename) {
     clock = 1;
     id_stall = 0;
     if_stall = 0;
+
+    for (int i = 0; i < bin_instruc.size(); i++) {
+        clock_end.push_back(0);
+    }
 }
 
 void Processor::run() {
-    for (; clock <= 8; clock++) {
+    for (; clock <= 14; clock++) {
         latch_set();
         
         run_id();
         run_if();
-        run_ex();
+        
         run_m();
         run_wb();
+        run_ex();
     }
     print_csv(pretty_instruc);
 }
@@ -67,12 +72,13 @@ void Processor::run_if() {
     string start_instruc = "";
 
     if (if_stall == 0) {
-        for (int i = 1; i < clock; i++) {
+        for (int i = 1; i < clock-clock_end[line/4]; i++) {
             start_instruc += " ;";
         }
     } 
 
     pretty_instruc[line/4].append(";"+start_instruc+"IF");
+    clock_end[line/4] = clock;
 
     if (id_stall == 1) {
         if_stall = 1;
@@ -169,8 +175,8 @@ void Processor::run_if() {
         case 111: {
             string immed_str_20 = instruc.substr(0, 1);
             string immed_str_10_1 = instruc.substr(1, 10);
-            string immed_str_11 = instruc.substr(12, 1);
-            string immed_str_19_12 = instruc.substr(13, 8);
+            string immed_str_11 = instruc.substr(11, 1);
+            string immed_str_19_12 = instruc.substr(12, 8);
 
             unsigned int immed_20 = stoi(immed_str_20, nullptr, 2);
             unsigned int immed_10_1 = stoi(immed_str_10_1, nullptr, 2);
@@ -179,6 +185,8 @@ void Processor::run_if() {
 
             unsigned int immed = (immed_10_1 << 1) | (immed_11 << 11) | 
                         (immed_19_12 << 12) | (immed_20 << 20);
+
+
 
             control_signals control_signal = {
                 line, 0, 0, 0, 0, rd, opcode, immed, 0
@@ -222,11 +230,21 @@ void Processor::run_id () {
     }
 
     pretty_instruc[line/4].append(";ID");
+    clock_end[line/4] = clock;
 }
 
 void Processor::run_ex () {
     unsigned int line = latch_ex_r.control.line;
     unsigned int squash = latch_ex_r.control.squash;
+    unsigned int opcode = latch_ex_r.control.opcode;
+    unsigned int immed = latch_ex_r.control.immed;
+
+    int line_displacement;
+    if ((1<<20) & immed) { //immed is negative
+        line_displacement = (int)immed - 2 * (1 << 20);
+    } else {
+        line_displacement = (int)immed;
+    }
 
     latch_m_l = {
         latch_ex_r.control
@@ -236,7 +254,18 @@ void Processor::run_ex () {
         return;
     }
 
+    switch (opcode) {
+        case 111:
+            latch_if_l.line = (unsigned int)((int)line + line_displacement);
+            latch_id_l.control.squash = 1;
+            latch_ex_l.control.squash = 1;
+            break;
+        default:
+            break;
+    }
+
     pretty_instruc[line/4].append(";EX");
+    clock_end[line/4] = clock;
 }
 
 void Processor::run_m () {
@@ -252,6 +281,7 @@ void Processor::run_m () {
     }
 
     pretty_instruc[line/4].append(";MEM");
+    clock_end[line/4] = clock;
 }
 
 void Processor::run_wb () {
@@ -264,6 +294,7 @@ void Processor::run_wb () {
     }
 
     pretty_instruc[line/4].append(";WB");
+    clock_end[line/4] = clock;
 }
 
 

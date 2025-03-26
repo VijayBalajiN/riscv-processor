@@ -32,6 +32,7 @@ tuple<vector<string>, vector<string> > get_code(string filename){
         readNext(file, check1, ' ');
         readNext(file, check2, ' ');
         readNext(file, check3, '\n');
+        if (check3[check3.length()-1]=='\r'){check3.pop_back();}
         bin_instruc.push_back(check2);
         instructions.push_back(check3);
     }

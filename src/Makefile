@@ -5,11 +5,17 @@ BUILD_DIR = build
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-# Main executable
+# Main executables
+$(BUILD_DIR)/forwarding: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/forwarding.o
+	clang++ -std=c++17 -g -fstandalone-debug $^ -o $@
+
 $(BUILD_DIR)/nonforwarding: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/nonforwarding.o
 	clang++ -std=c++17 -g -fstandalone-debug $^ -o $@
 
 # Object files
+$(BUILD_DIR)/forwarding.o: forwarding.cpp processor.h | $(BUILD_DIR)
+	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
+
 $(BUILD_DIR)/nonforwarding.o: nonforwarding.cpp processor.h | $(BUILD_DIR)
 	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
 
@@ -23,10 +29,22 @@ $(BUILD_DIR)/parse.o: parse.cpp parse.h | $(BUILD_DIR)
 	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
 
 # Phony targets
-.PHONY: run clean
+.PHONY: run run_f run_n build_f build_n clean
 
-run: $(BUILD_DIR)/nonforwarding
+# Build targets
+build_f: $(BUILD_DIR)/forwarding
+build_n: $(BUILD_DIR)/nonforwarding
+
+# Run targets
+run_f: $(BUILD_DIR)/forwarding
+	./$(BUILD_DIR)/forwarding
+
+run_n: $(BUILD_DIR)/nonforwarding
+	./$(BUILD_DIR)/nonforwarding
+
+# Original targets for backward compatibility
+run: $(BUILD_DIR)/forwarding
 	./$<
 
 clean:
-	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/nonforwarding
+	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/forwarding $(BUILD_DIR)/nonforwarding

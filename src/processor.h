@@ -9,6 +9,15 @@
 #include <assert.h>
 #include "parse.h"
 #include "print_csv.h"
+#define R_TYPE 51
+#define I_TYPE1 3
+#define I_TYPE2 19
+#define I_TYPE3 103
+#define S_TYPE 35
+#define SB_TYPE 99
+#define U_TYPE 55
+#define UJ_TYPE 111
+
 
 using namespace std;
 

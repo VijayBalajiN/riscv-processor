@@ -25,8 +25,7 @@ tuple<vector<string>, vector<string> > get_code(string filename){
     ifstream file;
     file.open(filename);
 
-    string check1, check3,temp;
-    string check2;
+    string check1, check2, check3;
 
     while (file.peek()!=EOF){
         readNext(file, check1, ' ');

@@ -1,24 +1,32 @@
-build/nonforwarding: parse.o processor.o nonforwarding.o
-	clang++ -std=c++17 -g -fstandalone-debug  build/parse.o build/print_csv.o build/processor.o build/nonforwarding.o -o build/nonforwarding
+# Define the build directory
+BUILD_DIR = build
 
-nonforwarding.o: nonforwarding.cpp build/processor.o
-	clang++ -std=c++17 -g -fstandalone-debug  -c nonforwarding.cpp -o nonforwarding.o
-	mv nonforwarding.o build/nonforwarding.o
+# Ensure build directory exists
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-processor.o: processor.cpp print_csv.o
-	clang++ -std=c++17 -g -fstandalone-debug -c processor.cpp -o processor.o
-	mv processor.o build/processor.o
+# Main executable
+$(BUILD_DIR)/nonforwarding: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/nonforwarding.o
+	clang++ -std=c++17 -g -fstandalone-debug $^ -o $@
 
-parse.o: parse.cpp
-	clang++ -std=c++17 -g -fstandalone-debug -c parse.cpp -o parse.o  # Compile without linking
-	mv parse.o build/parse.o
+# Object files
+$(BUILD_DIR)/nonforwarding.o: nonforwarding.cpp processor.h | $(BUILD_DIR)
+	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
 
-print_csv.o: print_csv.cpp
-	clang++ -std=c++17 -g -fstandalone-debug -c print_csv.cpp -o print_csv.o
-	mv print_csv.o build/print_csv.o
+$(BUILD_DIR)/processor.o: processor.cpp processor.h parse.h print_csv.h | $(BUILD_DIR)
+	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
 
-run: build/nonforwarding
-	build/nonforwarding
+$(BUILD_DIR)/print_csv.o: print_csv.cpp print_csv.h | $(BUILD_DIR)
+	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
+
+$(BUILD_DIR)/parse.o: parse.cpp parse.h | $(BUILD_DIR)
+	clang++ -std=c++17 -g -fstandalone-debug -c $< -o $@
+
+# Phony targets
+.PHONY: run clean
+
+run: $(BUILD_DIR)/nonforwarding
+	./$<
 
 clean:
-	rm -rf parse *.o nonforwarding forwarding build/*
+	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/nonforwarding

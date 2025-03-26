@@ -13,7 +13,9 @@ control_signals::control_signals()
 
 Processor::Processor(string filename) {
 
-    stack = new int[2010000];
+    stack = new int[2010000];   //  Processor::~Processor() {
+                                //     delete[] stack;
+                                //  }
     this->filename = filename;
 
     tuple<vector<string>, vector<string>> instruc_tuple = get_code(filename);
@@ -28,9 +30,7 @@ Processor::Processor(string filename) {
     id_stall = 0;
     if_stall = 0;
 
-    for (int i = 0; i < bin_instruc.size(); i++) {
-        clock_end.push_back(0);
-    }
+    clock_end.assign(bin_instruc.size(), 0);
 }
 
 void Processor::run() {
@@ -77,7 +77,7 @@ void Processor::run_if() {
     }
    
 
-    pretty_instruc[line/4].append(";"+start_instruc+"IF");
+    pretty_instruc[line/4].append(";"+start_instruc+"IF");  // why append ";" at the start explain me once you read this
     clock_end[line/4] = clock;
 
     if (id_stall == 1) {
@@ -107,10 +107,15 @@ void Processor::run_if() {
     unsigned int funct7 = stoi(funct7_str, nullptr, 2);
 
     
-
+    // 51 -> R-type
+    // 3, 19, 103 -> I-type
+    // 35 -> S-type
+    // 99 -> SB-type
+    // 55 -> U-type
+    // 111 -> UJ-type
 
     switch (opcode) {
-        case 51: {
+        case R_TYPE: {                                                     
             control_signals control_signal = {
                 line, funct7, rs2, rs1, funct3, rd, opcode, 0, 0
             };
@@ -119,7 +124,7 @@ void Processor::run_if() {
             };
             break;
         }
-        case 3: case 19: case 103: {
+        case I_TYPE1: case I_TYPE2: case I_TYPE3: {     // should jalr be handled separetly? also slli, srai, srli
             string immed_str = instruc.substr(0, 12);
             unsigned int immed = stoi(immed_str, nullptr, 2);
 
@@ -131,7 +136,7 @@ void Processor::run_if() {
             };
             break;
         }
-        case 35: {
+        case S_TYPE: {
             string immed_str_1 = instruc.substr(0, 7);
             string immed_str_2 = instruc.substr(20, 5);
 
@@ -149,9 +154,9 @@ void Processor::run_if() {
             };
             break;
         }
-        case 99: {
+        case SB_TYPE: {
             control_signals control_signal = {
-                line, 0, rs2, rs1, funct3, 0, opcode, 0, 0
+                line, 0, rs2, rs1, funct3, 0, opcode, 0, 0   // add immed values (copy paste from prev case?)
             };
 
             latch_id_l = {
@@ -160,16 +165,16 @@ void Processor::run_if() {
             break;
             
         }
-        case 55: {
+        case U_TYPE: {
             control_signals control_signal = {
-                line, 0, 0, 0, 0, rd, opcode, 0, 0
+                line, 0, 0, 0, 0, rd, opcode, 0, 0          // add immed values 31-12
             };
             latch_id_l = {
                 control_signal
             };
             break;
         } 
-        case 111: {
+        case UJ_TYPE: {
             string immed_str_20 = instruc.substr(0, 1);
             string immed_str_10_1 = instruc.substr(1, 10);
             string immed_str_11 = instruc.substr(11, 1);
@@ -252,7 +257,7 @@ void Processor::run_ex () {
     }
 
     switch (opcode) {
-        case 111:
+        case UJ_TYPE:
             latch_if_l.line = (unsigned int)((int)line + line_displacement);
             latch_id_l.control.squash = 1;
             latch_ex_l.control.squash = 1;

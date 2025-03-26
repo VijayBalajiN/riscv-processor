@@ -10,7 +10,7 @@ public:
         unsigned int opcode = latch_id_r.control.opcode;
 
         switch (opcode) {
-            case 51: case 99: case 35: case 103: {
+            case R_TYPE: case SB_TYPE: case S_TYPE: case I_TYPE3: {
                 unsigned int rs1 = latch_id_r.control.rs1;
                 unsigned int rs2 = latch_id_r.control.rs1;
 
@@ -20,7 +20,7 @@ public:
                             (latch_m_l.control.rd == rs1 || latch_m_l.control.rd == rs2)) ) return 1;
                 break;
             }
-            case 19: case 3: {
+            case I_TYPE2: case I_TYPE1: {
                 unsigned int rs1 = latch_id_r.control.rs1;
 
                 if ( (latch_ex_r.control.squash == 0 && latch_ex_l.control.rd != 0 && 

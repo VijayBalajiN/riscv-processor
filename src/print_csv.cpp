@@ -41,7 +41,7 @@ int count_char(string s, char delim){
 
 void print_csv(vector <string> v){
     ofstream file;
-    file.open("build/output.csv", ios::out | ios::trunc);
+    file.open("output.csv", ios::out | ios::trunc);
     int length = 0;
 
     for (int i = 0; i < v.size(); i++) {

@@ -20,7 +20,7 @@ public:
                             (latch_m_l.control.rd == rs1 || latch_m_l.control.rd == rs2)) ) return 1;
                 break;
             }
-            case I_TYPE2: case I_TYPE1: {
+            case I_TYPE2: case I_TYPE1: case UJ_TYPE: {
                 unsigned int rs1 = latch_id_r.control.rs1;
 
                 if ( (latch_ex_r.control.squash == 0 && latch_ex_l.control.rd != 0 && 

@@ -29,20 +29,21 @@ Processor::Processor(string filename) {
     clock = 1;
     id_stall = 0;
     if_stall = 0;
+    branch = 0;
 
     clock_end.assign(bin_instruc.size(), 0);
 }
 
 void Processor::run() {
     for (; clock <= 16; clock++) {
+        branch = 0;
         latch_set();
-        
-        run_id();
-        run_if();
         
         run_m();
         run_wb();
         run_ex();
+        run_id();
+        run_if();
     }
     print_csv(pretty_instruc);
 }
@@ -76,11 +77,20 @@ void Processor::run_if() {
         start_instruc += " ;";
     }
    
+    char check_stall;
 
-    pretty_instruc[line/4].append(";"+start_instruc+"IF");  // why append ";" at the start explain me once you read this
+    if (start_instruc == "") {
+        int pos = pretty_instruc[line/4].size()-1;
+        while (pretty_instruc[line/4][pos] == '-' || pretty_instruc[line/4][pos] == ';') {
+            pos --;
+        }
+        check_stall = pretty_instruc[line/4][pos];
+    }
+    if (check_stall == 'F') pretty_instruc[line/4].append(";-");
+    else pretty_instruc[line/4].append(";"+start_instruc+"IF");  // why append ";" at the start explain me once you read this
     clock_end[line/4] = clock;
 
-    if (id_stall == 1) {
+    if (id_stall == 1 || branch == 1) {
         return;
     }
 
@@ -206,7 +216,6 @@ void Processor::run_if() {
     }
 
     
-
     latch_if_l.line += 4;
 
 }
@@ -215,7 +224,11 @@ void Processor::run_id () {
     unsigned int line = latch_id_r.control.line;
     unsigned int opcode = latch_id_r.control.opcode;
     unsigned int squash = latch_id_r.control.squash;
-    unsigned int immed = latch_ex_r.control.immed;
+    unsigned int immed = latch_id_r.control.immed;
+
+    latch_ex_l = {
+        latch_id_r.control
+    };
 
     if (squash) {
         return;
@@ -223,9 +236,7 @@ void Processor::run_id () {
 
     int stall_check = stall_detector();
 
-    latch_ex_l = {
-        latch_id_r.control
-    };
+    
 
     if (stall_check) {
         id_stall = 1;
@@ -244,15 +255,25 @@ void Processor::run_id () {
                 }
 
                 latch_if_l.line = (unsigned int)((int)line + line_displacement);
+                branch = 1;
                 latch_id_l.control.squash = 1;
-                latch_ex_l.control.squash = 1;
+                
                 break;
             default:
+                branch = 0;
                 break;
         }
     }
 
-    pretty_instruc[line/4].append(";ID");
+    char check_stall;
+    int pos = pretty_instruc[line/4].size()-1;
+    while (pretty_instruc[line/4][pos] == '-' || pretty_instruc[line/4][pos] == ';') {
+        pos --;
+    }
+    check_stall = pretty_instruc[line/4][pos];
+
+    if (check_stall == 'D') pretty_instruc[line/4].append(";-");
+    else pretty_instruc[line/4].append(";ID");
     clock_end[line/4] = clock;
 }
 

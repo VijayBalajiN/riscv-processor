@@ -78,6 +78,7 @@ protected:
     int id_stall;
     int if_stall;
     int clock;
+    int branch;
 
     latch_if latch_if_l, latch_if_r;
     latch_id latch_id_l, latch_id_r;

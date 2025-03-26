@@ -215,6 +215,11 @@ void Processor::run_id () {
     unsigned int line = latch_id_r.control.line;
     unsigned int opcode = latch_id_r.control.opcode;
     unsigned int squash = latch_id_r.control.squash;
+    unsigned int immed = latch_ex_r.control.immed;
+
+    if (squash) {
+        return;
+    }
 
     int stall_check = stall_detector();
 
@@ -225,10 +230,26 @@ void Processor::run_id () {
     if (stall_check) {
         id_stall = 1;
         latch_ex_l.control.squash = 1;
-    } else id_stall = 0;
+    } else {
+        id_stall = 0;
 
-    if (squash) {
-        return;
+        switch (opcode) {
+            case 111:
+                int line_displacement;
+                
+                if ((1<<20) & immed) { //immed is negative
+                    line_displacement = (int)immed - 2 * (1 << 20);
+                } else {
+                    line_displacement = (int)immed;
+                }
+
+                latch_if_l.line = (unsigned int)((int)line + line_displacement);
+                latch_id_l.control.squash = 1;
+                latch_ex_l.control.squash = 1;
+                break;
+            default:
+                break;
+        }
     }
 
     pretty_instruc[line/4].append(";ID");
@@ -241,12 +262,7 @@ void Processor::run_ex () {
     unsigned int opcode = latch_ex_r.control.opcode;
     unsigned int immed = latch_ex_r.control.immed;
 
-    int line_displacement;
-    if ((1<<20) & immed) { //immed is negative
-        line_displacement = (int)immed - 2 * (1 << 20);
-    } else {
-        line_displacement = (int)immed;
-    }
+    
 
     latch_m_l = {
         latch_ex_r.control
@@ -256,15 +272,6 @@ void Processor::run_ex () {
         return;
     }
 
-    switch (opcode) {
-        case UJ_TYPE:
-            latch_if_l.line = (unsigned int)((int)line + line_displacement);
-            latch_id_l.control.squash = 1;
-            latch_ex_l.control.squash = 1;
-            break;
-        default:
-            break;
-    }
 
     pretty_instruc[line/4].append(";EX");
     clock_end[line/4] = clock;

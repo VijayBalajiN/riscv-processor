@@ -1,7 +1,16 @@
-build/nonforwarding: parse.o processor.o nonforwarding.o
+all: forwarding nonforwarding
+
+forwarding: parse.o processor.o forwarding.o
+	clang++ -std=c++17 -g -fstandalone-debug build/parse.o build/print_csv.o build/processor.o build/forwarding.o -o build/forwarding
+
+forwarding.o: forwarding.cpp processor.o
+	clang++ -std=c++17 -g -fstandalone-debug  -c forwarding.cpp -o forwarding.o
+	mv forwarding.o build/forwarding.o
+
+nonforwarding: parse.o processor.o nonforwarding.o
 	clang++ -std=c++17 -g -fstandalone-debug  build/parse.o build/print_csv.o build/processor.o build/nonforwarding.o -o build/nonforwarding
 
-nonforwarding.o: nonforwarding.cpp build/processor.o
+nonforwarding.o: nonforwarding.cpp processor.o
 	clang++ -std=c++17 -g -fstandalone-debug  -c nonforwarding.cpp -o nonforwarding.o
 	mv nonforwarding.o build/nonforwarding.o
 

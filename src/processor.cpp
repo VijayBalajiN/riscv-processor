@@ -300,4 +300,3 @@ int Processor::stall_detector() {
     cout << "Stall detection in base Processor class.\n";
     return 0;
 }
-

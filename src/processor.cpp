@@ -164,7 +164,7 @@ void Processor::run_if() {
             unsigned int immed = (immed_1 << 5) | immed_2;
 
             control_signals control_signal = {
-                line, rs2, rs1, funct3, 0, opcode, immed, 0, 0
+                line, 0, rs2, rs1, funct3, 0, opcode, immed, 0
             };
 
             latch_id_l = {

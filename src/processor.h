@@ -9,6 +9,7 @@
 #include <assert.h>
 #include "parse.h"
 #include "print_csv.h"
+
 #define R_TYPE 51
 #define I_TYPE1 3
 #define I_TYPE2 19
@@ -62,7 +63,7 @@ typedef struct latch_wb {
 
 class Processor {
 public:
-    Processor(string filename);
+    Processor(string filename, int cycle_count);
     void run();
     void print();
 
@@ -79,6 +80,9 @@ protected:
     int if_stall;
     int clock;
     int branch;
+
+    int cycle_count;
+    int tot_lines;
 
     latch_if latch_if_l, latch_if_r;
     latch_id latch_id_l, latch_id_r;

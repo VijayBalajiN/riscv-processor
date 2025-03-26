@@ -11,17 +11,20 @@ control_signals::control_signals()
           opcode(127), immed(1048575), squash(1) {}
 
 
-Processor::Processor(string filename) {
+Processor::Processor(string filename, int cycle_count) {
 
     stack = new int[2010000];   //  Processor::~Processor() {
                                 //     delete[] stack;
                                 //  }
     this->filename = filename;
+    this->cycle_count = cycle_count;
 
     tuple<vector<string>, vector<string>> instruc_tuple = get_code(filename);
 
     bin_instruc = get<0>(instruc_tuple);
     pretty_instruc = get<1>(instruc_tuple);
+
+    this->tot_lines = pretty_instruc.size();
 
     latch_if_l.line = 0;
     latch_if_l.stall = 0;
@@ -35,7 +38,7 @@ Processor::Processor(string filename) {
 }
 
 void Processor::run() {
-    for (; clock <= 16; clock++) {
+    for (; clock <= cycle_count; clock++) {
         branch = 0;
         latch_set();
         
@@ -66,6 +69,11 @@ void Processor::latch_set () {
 void Processor::run_if() {
     
     unsigned int line = latch_if_r.line;
+
+    if (line/4 >= tot_lines) {
+        if (id_stall == 0) latch_id_l.control.squash = 1;
+        return;
+    }
 
     string instruc_hex = bin_instruc[line/4];
 
@@ -260,7 +268,6 @@ void Processor::run_id () {
                 
                 break;
             default:
-                branch = 0;
                 break;
         }
     }

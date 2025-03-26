@@ -68,17 +68,23 @@ public:
 };
 
 int main (int argc, char * argv[]) {
+
+    string filename;
+    int cycle_count = 6;
+    
     if (argc != 3) {
         cout << "Usage: ./executable [filename] [cycle_count]" << endl;
-        return 0;
+
+        filename = "../inputfiles/testcases/test1.txt";
+    } else {
+        filename = argv[1];
+        string cycle_count_str = argv[2];
+        cycle_count = stoi(cycle_count_str, nullptr, 10);
     }
 
-    string filename = argv[1];
-    string cycle_count_str = argv[2];
-    int cycle_count = stoi(cycle_count_str, nullptr, 10);
-
-
     Processor_Forwarding processor(filename, cycle_count);
+    cout << "hello\n";
     processor.run();
+    cout << "hello2\n";
     processor.print();   
 }

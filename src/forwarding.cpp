@@ -39,7 +39,7 @@ public:
                 return 0;
                 break;
             }
-            case I_TYPE2: case S_TYPE: {
+            case I_TYPE1: case I_TYPE2: case S_TYPE: {
                 unsigned int rs1 = latch_id_r.control.rs1;
                 // alu or sw preceded by mem operation
                 if ( latch_ex_r.control.squash == 0 && latch_ex_r.control.rd != 0 && latch_ex_r.control.opcode == I_TYPE1 && 
@@ -56,7 +56,7 @@ public:
                 return 0;
                 break;
             }
-            case I_TYPE1: case U_TYPE: case UJ_TYPE: {return 0; break;}
+            case U_TYPE: case UJ_TYPE: case 23: {return 0; break;}
 
             
             default:

@@ -1,5 +1,25 @@
 #include "processor.h"
 
+string sanitize_string(const string& input) {
+    string result;
+    for (unsigned char c : input) {
+        if (c < 128) { // Only keep ASCII characters
+            result.push_back(c);
+        } else {
+            result.push_back(' '); // Replace non-ASCII with space
+        }
+    }
+    return result;
+}
+
+int max_length(vector<string> v){
+    int length = 0;
+    for (int i = 0; i < v.size(); i++) {
+        length =((count_char(v[i], ';')+1) > length ? (count_char(v[i], ';')+1) : length);
+    }
+    return length;
+}
+
 control_signals::control_signals(unsigned int line, unsigned int funct7, unsigned int rs2, 
                     unsigned int rs1, unsigned int funct3, unsigned int rd, 
                     unsigned int opcode, unsigned int immed, unsigned int squash) 
@@ -58,9 +78,50 @@ void Processor::run() {
 }
 
 void Processor::print () {
-    for (const auto &a : pretty_instruc) {
-        cout << a << "\n";
+    printf("\n");
+    int l = max_length(pretty_instruc);
+    int first = 1;
+    for (int i = 0; i <= l; i++){
+        if (first){printf("%s", "Instruction          ");first=0;}
+        else{
+            string s_i = to_string(i);
+            printf("C");
+            printf("%d", i);
+            for (int i = s_i.length(); i < 7; i++){
+                cout << " ";
+            }
+            // printf("C%3d", i);
+        }
+
     }
+    cout << endl;
+    for (string a: pretty_instruc){
+        a = sanitize_string(a);
+        
+        int first = 1;
+        int count=0;
+        for (int i = 0; i<a.size(); i++){
+            if (a[i] == ';'){
+                if (first){
+                    while (count < 20){
+                        cout << " "; count++;    
+                    }
+                    first = 0;
+                }
+                else {
+                    while (count < 7){
+                        cout << " "; count++;
+                    }
+                }
+                cout << ';'; count = 0;
+            }
+            else{
+                cout << a[i]; count++;
+            }
+        }
+        cout << endl;
+    }
+
 }
 
 
@@ -534,9 +595,16 @@ int Processor::stall_detector() {
 }
 
 void Processor::print_registers() {
-    cout << "Formatted Register Values:\n";
+    cout << "\nFormatted Register Values:\n";
+    int count = 0;
     for (int i = 0; i < 32; ++i) {
-        cout << "  (R" << i << ") " << registers[i] << "  | ";
+        if (count == 8){
+            cout << endl;
+            count = 0;
+        }
+        // cout << "  (R" << i << ") " << registers[i] << "  | ";
+        printf("  (R%02d) %5d  | ", i, registers[i]);
+        count++;
     }
     cout << endl;
 }

@@ -72,4 +72,5 @@ void print_csv(vector <string> v){
         }
         file << '\n';
     }
+    file.close();
 }

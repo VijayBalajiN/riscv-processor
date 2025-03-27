@@ -497,6 +497,7 @@ void Processor::run_ex () {
             case 0:
                 if (funct7 == 0) alu_output = operand1 + operand2;
                 else if (funct7 == 32) alu_output = operand1 - operand2;
+                else if (funct7 == 1) alu_output = operand1 * operand2;
                 else {
                     cout << pretty_instruc[line/4] << endl;
                     printf("Incorrect Code\n");
@@ -507,7 +508,9 @@ void Processor::run_ex () {
                 alu_output = operand1 << (operand2 & 0x1F);
                 break;
             case 4:
-                alu_output = operand1 ^ operand2;
+                if (funct7 == 0 && operand2 == 0) printf("Division By Zero Error\n");
+                if (funct7 == 1) alu_output = (operand2 == 0 ? 0 : operand1 / operand2);
+                else alu_output = operand1 ^ operand2;
                 break;
             case 5:
                 alu_output = operand1 >> (operand2 & 0x1F);

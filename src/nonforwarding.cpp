@@ -39,12 +39,12 @@ public:
 int main (int argc, char * argv[]) {
 
     string filename;
-    int cycle_count = 12;
+    int cycle_count = 20;
     
     if (argc != 3) {
         cout << "Usage: ./executable [filename] [cycle_count]" << endl;
 
-        filename = "../inputfiles/testcases/test15.txt";
+        filename = "../inputfiles/testcases/test1.txt";
     } else {
         filename = argv[1];
         string cycle_count_str = argv[2];

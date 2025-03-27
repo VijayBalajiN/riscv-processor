@@ -6,7 +6,6 @@ c:        00000393        addi x7 x0 0
 14:        03c35263        bge x6 x28 36
 18:        0005ae83        lw x29 0 x11
 1c:        00062f03        lw x30 0 x12
-20:        03ee8eb3        mul x29 x29 x30
 24:        01d383b3        add x7 x7 x29
 28:        00130313        addi x6 x6 1
 2c:        00458593        addi x11 x11 4

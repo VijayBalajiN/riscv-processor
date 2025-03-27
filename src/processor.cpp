@@ -22,7 +22,6 @@ Processor::Processor(string filename, int cycle_count) {
     tuple<vector<string>, vector<string>> instruc_tuple = get_code(filename);
 
     bin_instruc = get<0>(instruc_tuple);
-    pretty_instruc.reserve(10000);
     pretty_instruc = get<1>(instruc_tuple);
 
     this->tot_lines = pretty_instruc.size();
@@ -59,7 +58,7 @@ void Processor::run() {
 }
 
 void Processor::print () {
-    for (const auto &a : pretty_instruc) 
+    for (const auto &a : pretty_instruc) {
         cout << a << "\n";
     }
 }
@@ -180,8 +179,21 @@ void Processor::run_if() {
             break;
         }
         case SB_TYPE: {
+            string immed_str_12 = instruc.substr(0, 1);
+            string immed_str_10_5 = instruc.substr(1, 6);
+            string immed_str_4_1 = instruc.substr(20, 4);
+            string immed_str_11 = instruc.substr(24, 1);
+
+            unsigned int immed_12 = stoi(immed_str_12, nullptr, 2);
+            unsigned int immed_10_5 = stoi(immed_str_10_5, nullptr, 2);
+            unsigned int immed_4_1 = stoi(immed_str_4_1, nullptr, 2);
+            unsigned int immed_11 = stoi(immed_str_11, nullptr, 2);
+
+            unsigned int immed = (immed_12 << 12) | (immed_11 << 11) | 
+                        (immed_10_5 << 5) | (immed_4_1 << 1);
+
             control_signals control_signal = {
-                line, 0, rs2, rs1, funct3, 0, opcode, 0, 0   // add immed values (copy paste from prev case?)
+                line, 0, rs2, rs1, funct3, 0, opcode, immed, 0   // add immed values (copy paste from prev case?)
             };
 
             latch_id_l = {
@@ -191,8 +203,12 @@ void Processor::run_if() {
             
         }
         case U_TYPE: {
+            string immed_str = instruc.substr(0, 20);
+
+            unsigned int immed = stoi(immed_str, nullptr, 2);
+
             control_signals control_signal = {
-                line, 0, 0, 0, 0, rd, opcode, 0, 0          // add immed values 31-12
+                line, 0, 0, 0, 0, rd, opcode, immed, 0          // add immed values 31-12
             };
             latch_id_l = {
                 control_signal
@@ -240,9 +256,12 @@ void Processor::run_id () {
     unsigned int opcode = latch_id_r.control.opcode;
     unsigned int squash = latch_id_r.control.squash;
     unsigned int immed = latch_id_r.control.immed;
+    unsigned int funct3 = latch_id_r.control.funct3;
 
-    int operand1 = registers[latch_id_r.control.rs1];
-    int operand2 = registers[latch_id_r.control.rs2];
+    latch_id_r.operand1 = registers[latch_id_r.control.rs1];
+    latch_id_r.operand2 = registers[latch_id_r.control.rs2];
+
+    
 
 
     latch_ex_l = {
@@ -262,6 +281,13 @@ void Processor::run_id () {
         latch_ex_l.control.squash = 1;
     } else {
         id_stall = 0;
+
+        forwarding_id();
+
+        int operand1 = latch_id_r.operand1;
+        int operand2 = latch_id_r.operand2;
+        int line_displacement;
+        int jump;
 
         switch (opcode) {
             case R_TYPE:
@@ -296,7 +322,7 @@ void Processor::run_id () {
                 break;
                 
             case UJ_TYPE:
-                int line_displacement;
+                
                 
                 if ((1<<20) & immed) { //immed is negative
                     line_displacement = (int)immed - 2 * (1 << 20);
@@ -309,6 +335,53 @@ void Processor::run_id () {
                 latch_id_l.control.squash = 1;
                 
                 break;
+            case I_TYPE3: 
+                
+
+                if ((1<<11) & immed) {
+                    line_displacement = (int)immed - 2 * (1<<11);
+                } else {
+                    line_displacement = (int)immed;
+                }
+                latch_ex_l.use_alu = 1;
+
+                latch_if_l.line = (unsigned int)((int)line + line_displacement);
+                branch = 1;
+                latch_id_l.control.squash = 1;
+            case SB_TYPE:
+                
+
+                if ((1<<12) & immed) {
+                    line_displacement = (int)immed - 2 * (1<<12);
+                } else {
+                    line_displacement = (int)immed;
+                }
+
+                jump = 0;
+
+                switch (funct3) {
+                    case 0:
+                        if (operand1 == operand2) jump = 1;
+                        break;
+                    case 1:
+                        if (operand1 != operand2) jump = 1;
+                        break;
+                    case 4: case 6:
+                        if (operand1 < operand2) jump = 1;
+                        break;
+                    case 5: case 7:
+                        if (operand1 >= operand2) jump = 1;
+                        break;
+                    default:
+                        cout << "Incorrect Opcode " << pretty_instruc[line/4] << endl;
+                        assert(0);
+                }
+
+                if (jump == 1) {
+                    latch_if_l.line = (unsigned int)((int)line + line_displacement);
+                    branch = 1;
+                    latch_id_l.control.squash = 1;
+                }
             default:
                 break;
         }
@@ -447,8 +520,8 @@ void Processor::run_wb () {
 }
 
 void Processor::run_wb1 () {
-    forwarding_wb();
-    if (latch_wb_r.control.squash == 0 && latch_wb_r.write_back == 1) {
+
+    if (latch_wb_r.control.squash == 0 && latch_wb_r.write_back == 1 && latch_wb_r.control.rd != 0) {
         registers[latch_wb_r.control.rd] = (unsigned int)latch_wb_r.mem_output;
     }
 }
@@ -470,4 +543,4 @@ void Processor::print_registers() {
 
 void Processor::forwarding_ex(){}
 void Processor::forwarding_m(){}
-void Processor::forwarding_wb(){}
+void Processor::forwarding_id(){}

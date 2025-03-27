@@ -5,6 +5,150 @@ public:
     Processor_Forwarding(string filename, int cycle_count) : Processor(filename, cycle_count) {
     }
 
+    void forwarding_id() override {
+        unsigned int opcode = latch_id_r.control.opcode;
+        unsigned int rs1 = latch_id_r.control.rs1;
+        unsigned int rs2 = latch_id_r.control.rs2;
+
+        switch(opcode) {
+            case I_TYPE3: {
+                if (latch_m_l.control.squash == 0 && 
+                    (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                    latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_m_l.alu_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_wb_l.mem_output;
+                }
+                break;
+
+            }
+            case SB_TYPE: {
+                if (latch_m_l.control.squash == 0 && 
+                    (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                    latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_m_l.alu_output;
+                }
+                if (latch_m_l.control.squash == 0 && 
+                (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs2) {
+                    latch_id_r.operand2 = latch_m_l.alu_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs2) {
+                        latch_id_r.operand2 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_id_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs2) {
+                        latch_id_r.operand2 = latch_wb_l.mem_output;
+                }
+                break;
+            }
+        }
+
+    }
+
+    void forwarding_ex() override {
+        unsigned int opcode = latch_ex_r.control.opcode;
+        unsigned int rs1 = latch_ex_r.control.rs1;
+        unsigned int rs2 = latch_ex_r.control.rs2;
+
+        switch (opcode) {
+            case R_TYPE: {
+                if (latch_m_l.control.squash == 0 && 
+                    (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                    latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_m_l.alu_output;
+                }
+                if (latch_m_l.control.squash == 0 && 
+                (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs2) {
+                    latch_ex_r.operand2 = latch_m_l.alu_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs2) {
+                        latch_ex_r.operand2 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs2) {
+                        latch_ex_r.operand2 = latch_wb_l.mem_output;
+                }
+                break;
+            }
+            case I_TYPE1: case S_TYPE: {
+                if (latch_m_l.control.squash == 0 && 
+                    (latch_m_l.control.opcode == R_TYPE || latch_m_l.control.opcode == I_TYPE2 || latch_m_l.control.opcode == I_TYPE3) &&
+                    latch_m_l.control.rd != 0 && latch_m_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_m_l.alu_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_wb_l.mem_output;
+                }
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_ex_r.operand1 = latch_wb_l.mem_output;
+                }
+                break;     
+            }
+        }
+
+    }
+
+void forwarding_m() override {
+        unsigned int opcode = latch_m_r.control.opcode;
+        unsigned int rs1 = latch_m_r.control.rs1;
+        unsigned int rs2 = latch_m_r.control.rs2;
+
+        switch (opcode) {
+            case S_TYPE: {
+                if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == R_TYPE || latch_wb_l.control.opcode == I_TYPE2 || latch_wb_l.control.opcode == I_TYPE3) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs2) {
+                        latch_m_r.mem_write_val = latch_wb_l.mem_output;
+                }
+                else if (latch_wb_l.control.squash == 0 && 
+                    (latch_wb_l.control.opcode == I_TYPE1) &&
+                    latch_wb_l.control.rd != 0 && latch_wb_l.control.rd == rs1) {
+                        latch_m_r.mem_write_val = latch_wb_l.mem_output;
+                }
+            }
+        }
+    }
+
 
     int stall_detector() override {
         unsigned int opcode = latch_id_r.control.opcode;

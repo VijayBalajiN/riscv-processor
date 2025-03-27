@@ -22,6 +22,7 @@ Processor::Processor(string filename, int cycle_count) {
     tuple<vector<string>, vector<string>> instruc_tuple = get_code(filename);
 
     bin_instruc = get<0>(instruc_tuple);
+    pretty_instruc.reserve(10000);
     pretty_instruc = get<1>(instruc_tuple);
 
     this->tot_lines = pretty_instruc.size();
@@ -58,7 +59,7 @@ void Processor::run() {
 }
 
 void Processor::print () {
-    for (const auto &a : pretty_instruc) {
+    for (const auto &a : pretty_instruc) 
         cout << a << "\n";
     }
 }
@@ -91,7 +92,7 @@ void Processor::run_if() {
         start_instruc += " ;";
     }
    
-    char check_stall;
+    char check_stall = ' ';
 
     if (start_instruc == "") {
         int pos = pretty_instruc[line/4].size()-1;
@@ -313,7 +314,7 @@ void Processor::run_id () {
         }
     }
 
-    char check_stall;
+    char check_stall = ' ';
     int pos = pretty_instruc[line/4].size()-1;
     while (pretty_instruc[line/4][pos] == '-' || pretty_instruc[line/4][pos] == ';') {
         pos --;

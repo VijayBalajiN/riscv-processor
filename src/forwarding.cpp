@@ -75,7 +75,7 @@ int main (int argc, char * argv[]) {
     if (argc != 3) {
         cout << "Usage: ./executable [filename] [cycle_count]" << endl;
 
-        filename = "../inputfiles/testcases/test1.txt";
+        filename = "../inputfiles/testcases/test15.txt";
     } else {
         filename = argv[1];
         string cycle_count_str = argv[2];

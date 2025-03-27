@@ -35,20 +35,26 @@ Processor::Processor(string filename, int cycle_count) {
     branch = 0;
 
     clock_end.assign(bin_instruc.size(), 0);
+
+    for (int i = 0; i < 32; i++) registers[i] = 0;
 }
 
 void Processor::run() {
     for (; clock <= cycle_count; clock++) {
         branch = 0;
         latch_set();
+
+        run_wb1(); //First half of cycle wb writes into registers before reading is performed
+        run_id();
+        run_if();
         
         run_m();
         run_wb();
         run_ex();
-        run_id();
-        run_if();
+        
     }
     print_csv(pretty_instruc);
+    print_registers();
 }
 
 void Processor::print () {
@@ -234,6 +240,10 @@ void Processor::run_id () {
     unsigned int squash = latch_id_r.control.squash;
     unsigned int immed = latch_id_r.control.immed;
 
+    int operand1 = registers[latch_id_r.control.rs1];
+    int operand2 = registers[latch_id_r.control.rs2];
+
+
     latch_ex_l = {
         latch_id_r.control
     };
@@ -253,7 +263,38 @@ void Processor::run_id () {
         id_stall = 0;
 
         switch (opcode) {
-            case 111:
+            case R_TYPE:
+                latch_ex_l.operand1 = operand1;
+                latch_ex_l.operand2 = operand2;
+                latch_ex_l.write_back = 1;
+                latch_ex_l.use_alu = 1;
+                break;
+
+            case I_TYPE2:
+                latch_ex_l.operand1 = operand1;
+                latch_ex_l.operand2 = immed;
+                latch_ex_l.write_back = 1;
+                latch_ex_l.use_alu = 1;
+                break;
+
+            case I_TYPE1:
+
+                latch_ex_l.operand1 = operand1;
+                latch_ex_l.operand2 = immed;
+                latch_ex_l.use_alu = 1;
+                latch_ex_l.mem_read = 1;
+                latch_ex_l.write_back = 1;
+                break;
+
+            case S_TYPE:
+                latch_ex_l.mem_write_val = registers[latch_id_r.control.rs2];
+                latch_ex_l.mem_write = 1;
+                latch_ex_l.operand1 = operand1;
+                latch_ex_l.operand2 = immed;
+                latch_ex_l.use_alu = 1;
+                break;
+                
+            case UJ_TYPE:
                 int line_displacement;
                 
                 if ((1<<20) & immed) { //immed is negative
@@ -289,19 +330,68 @@ void Processor::run_ex () {
     unsigned int squash = latch_ex_r.control.squash;
     unsigned int opcode = latch_ex_r.control.opcode;
     unsigned int immed = latch_ex_r.control.immed;
+    
+    int operand1 = latch_ex_r.operand1;
+    int operand2 = latch_ex_r.operand2;
 
     
 
     latch_m_l = {
-        latch_ex_r.control
+        latch_ex_r.control, 
+        latch_ex_r.mem_write_val,
+        latch_ex_r.mem_read,
+        latch_ex_r.mem_write,
+        latch_ex_r.write_back
     };
 
     if (squash) {
         return;
     }
 
+    int alu_output;
 
-    pretty_instruc[line/4].append(";EX");
+    if (latch_ex_r.use_alu == 1) {
+        unsigned int funct3 = latch_ex_r.control.funct3;
+        unsigned int funct7 = latch_ex_r.control.funct7;
+
+        switch(funct3) {
+            case 0:
+                if (funct7 == 0) alu_output = operand1 + operand2;
+                else if (funct7 == 32) alu_output = operand1 - operand2;
+                else {
+                    printf("Incorrect Code\n");
+                    assert(0);
+                }
+                break;
+            case 1:
+                alu_output = operand1 << (operand2 & 0x1F);
+                break;
+            case 4:
+                alu_output = operand1 ^ operand2;
+                break;
+            case 5:
+                alu_output = operand1 >> (operand2 & 0x1F);
+                break;
+            case 6:
+                alu_output = operand1 | operand2;
+                break;
+            case 7:
+                alu_output = operand1 & operand2;
+                break;
+            case 2:
+                alu_output = operand1 + operand2;
+                break;
+            default:
+                cout << pretty_instruc[line/4] << endl;
+                printf("Incorrect Code\n");
+                assert(0);
+        }
+    }
+
+    latch_m_l.alu_output = alu_output;
+
+    if (clock_end[line/4] == clock) pretty_instruc[line/4].append("/EX");
+    else pretty_instruc[line/4].append(";EX");
     clock_end[line/4] = clock;
 }
 
@@ -310,14 +400,27 @@ void Processor::run_m () {
     unsigned int squash = latch_m_r.control.squash;
 
     latch_wb_l = {
-        latch_m_r.control
+        latch_m_r.control, 
+        latch_m_r.write_back,
+        latch_m_r.alu_output
     };
 
     if (squash) {
         return;
     }
 
-    pretty_instruc[line/4].append(";MEM");
+    int address = latch_m_r.alu_output;
+
+    if (latch_m_r.mem_write == 1) {
+        if (address > 0 && address/4 < 2010000)
+        stack[address] = latch_m_r.mem_write_val;
+    } else if (latch_m_r.mem_read == 1) {
+        latch_wb_l.mem_output = stack[address];
+    }
+
+
+    if (clock_end[line/4] == clock) pretty_instruc[line/4].append("/MEM");
+    else pretty_instruc[line/4].append(";MEM");
     clock_end[line/4] = clock;
 }
 
@@ -330,8 +433,17 @@ void Processor::run_wb () {
         return;
     }
 
-    pretty_instruc[line/4].append(";WB");
+
+
+    if (clock_end[line/4] == clock) pretty_instruc[line/4].append("/WB");
+    else pretty_instruc[line/4].append(";WB");
     clock_end[line/4] = clock;
+}
+
+void Processor::run_wb1 () {
+    if (latch_wb_r.control.squash == 0 && latch_wb_r.write_back == 1) {
+        registers[latch_wb_r.control.rd] = (unsigned int)latch_wb_r.mem_output;
+    }
 }
 
 
@@ -339,4 +451,12 @@ int Processor::stall_detector() {
     // Default implementation
     cout << "Stall detection in base Processor class.\n";
     return 0;
+}
+
+void Processor::print_registers() {
+    cout << "Formatted Register Values:\n";
+    for (int i = 0; i < 32; ++i) {
+        cout << "  (R" << i << ") " << registers[i] << "  | ";
+    }
+    cout << endl;
 }

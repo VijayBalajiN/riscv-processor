@@ -51,14 +51,34 @@ typedef struct latch_id {
 
 typedef struct latch_ex {
     control_signals control;
+
+    int operand1;
+    int operand2;
+
+    unsigned int use_alu : 1;
+
+    int mem_write_val;
+    unsigned int mem_read : 1;
+    unsigned int mem_write : 1;
+    unsigned int write_back : 1;
 }latch_ex ;
 
 typedef struct latch_m {
     control_signals control;
+
+    int mem_write_val;
+    unsigned int mem_read : 1;
+    unsigned int mem_write : 1;
+    unsigned int write_back : 1;
+
+    int alu_output;
 }latch_m;
 
 typedef struct latch_wb {
     control_signals control;
+
+    unsigned int write_back : 1;
+    int mem_output;
 }latch_wb;
 
 class Processor {
@@ -96,6 +116,8 @@ protected:
     void run_ex();
     void run_m();
     void run_wb();
+    void run_wb1();
+    void print_registers();
     virtual int stall_detector();
 };
 

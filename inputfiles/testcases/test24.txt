@@ -1,0 +1,17 @@
+0:        00050293        addi x5 x10 0
+4:        00050313        addi x6 x10 0
+8:        0055c463        blt x11 x5 8 <update_min_b>
+c:        0080006f        jal x0 8 <check_max_b>
+10:        00058293        addi x5 x11 0
+14:        00b34463        blt x6 x11 8 <update_max_b>
+18:        0080006f        jal x0 8 <check_min_c>
+1c:        00058313        addi x6 x11 0
+20:        00564463        blt x12 x5 8 <update_min_c>
+24:        0080006f        jal x0 8 <check_max_c>
+28:        00060293        addi x5 x12 0
+2c:        00c34463        blt x6 x12 8 <update_max_c>
+30:        0080006f        jal x0 8 <store_result>
+34:        00060313        addi x6 x12 0
+38:        0056a023        sw x5 0 x13
+3c:        00672023        sw x6 0 x14
+40:        00008067        jalr x0 x1 0

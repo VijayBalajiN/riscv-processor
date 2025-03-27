@@ -1,0 +1,31 @@
+0:        00000293        addi x5 x0 0
+4:        00a28333        add x6 x5 x10
+8:        00030303        lb x6 0 x6
+c:        00030663        beq x6 x0 12
+10:        00128293        addi x5 x5 1
+14:        ff1ff06f        jal x0 -16
+18:        00028513        addi x10 x5 0
+1c:        00008067        jalr x0 x1 0
+20:        ff010113        addi x2 x2 -16
+24:        00112023        sw x1 0 x2
+28:        00912423        sw x9 8 x2
+2c:        00050493        addi x9 x10 0
+30:        00000097        auipc x1 0x0 <strlen>
+34:        fd0080e7        jalr x1 x1 -48
+38:        40155293        srai x5 x10 1
+3c:        00000313        addi x6 x0 0
+40:        02535663        bge x6 x5 44
+44:        006483b3        add x7 x9 x6
+48:        40650e33        sub x28 x10 x6
+4c:        fffe0e13        addi x28 x28 -1
+50:        009e0e33        add x28 x28 x9
+54:        00038e83        lb x29 0 x7
+58:        000e0f03        lb x30 0 x28
+5c:        01de0023        sb x29 0 x28
+60:        01e38023        sb x30 0 x7
+64:        00130313        addi x6 x6 1
+68:        fd9ff06f        jal x0 -40
+6c:        00812483        lw x9 8 x2
+70:        00012083        lw x1 0 x2
+74:        01010113        addi x2 x2 16
+78:        00008067        jalr x0 x1 0

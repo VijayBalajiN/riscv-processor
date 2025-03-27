@@ -1,15 +1,20 @@
 # Define the build directory
 BUILD_DIR = build
 
+all:
+	@echo "Building all targets..."
+	@$(MAKE) build_f
+	@$(MAKE) build_n
+	@echo "All targets built successfully."
 # Ensure build directory exists
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # Main executables
-$(BUILD_DIR)/forwarding: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/forwarding.o
+$(BUILD_DIR)/forward: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/forwarding.o
 	clang++ -std=c++17 -g -fstandalone-debug $^ -o $@
 
-$(BUILD_DIR)/nonforwarding: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/nonforwarding.o
+$(BUILD_DIR)/noforward: $(BUILD_DIR)/parse.o $(BUILD_DIR)/print_csv.o $(BUILD_DIR)/processor.o $(BUILD_DIR)/nonforwarding.o
 	clang++ -std=c++17 -g -fstandalone-debug $^ -o $@
 
 # Object files
@@ -32,15 +37,15 @@ $(BUILD_DIR)/parse.o: parse.cpp parse.h | $(BUILD_DIR)
 .PHONY: run run_f run_n build_f build_n clean
 
 # Build targets
-build_f: $(BUILD_DIR)/forwarding
-build_n: $(BUILD_DIR)/nonforwarding
+build_f: $(BUILD_DIR)/forward
+build_n: $(BUILD_DIR)/noforward
 
 # Run targets
-run_f: $(BUILD_DIR)/forwarding
-	./$(BUILD_DIR)/forwarding ../inputfiles/testcases/test15.txt 200
+run_f: $(BUILD_DIR)/forward
+	./$(BUILD_DIR)/forward ../inputfiles/testcases/test15.txt 200
 
-run_n: $(BUILD_DIR)/nonforwarding
-	./$(BUILD_DIR)/nonforwarding  ../inputfiles/testcases/test15.txt 200
+run_n: $(BUILD_DIR)/noforward
+	./$(BUILD_DIR)/noforward  ../inputfiles/testcases/test15.txt 200
 
 # Original targets for backward compatibility
 run: $(BUILD_DIR)/forwarding

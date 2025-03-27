@@ -1,0 +1,11 @@
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     
+add x6 x5 x10       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x6 0 x6          ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+add x6 x0 x0        ;       ;       ;IF     ;-      ;-      ;ID     ;EX     ;MEM    ;WB
+beq  x6  x0  12     ;       ;       ;       ;       ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     
+add x6 x5 x10       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x6 0 x6          ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+add x6 x0 x0        ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+beq  x6  x0  12     ;       ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB

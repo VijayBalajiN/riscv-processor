@@ -1,7 +1,0 @@
-Instruction Number, C0, C1, C2, C3 , C4, C5, C6 , C7, C8, C9 , C10, C11, C12, C13, C14, C15, 
-addi x1 x0 1      , IF, ID, EX, MEM, WB, 
-lw x3 2 x1        ,   , IF, ID, -  , - , EX, MEM, WB, 
-beq x3 x1 12      ,   ,   , IF, -  , - , ID, -  , - , EX, MEM, WB , 
-addi x11 x12 3    ,   ,   ,   ,    ,   , IF, -  , - , ID, EX , MEM, WB , 
-beq x11 x13 4     ,   ,   ,   ,    ,   ,   ,    ,   , IF, ID , -  , -  , EX , MEM, WB , 
-sw x14 2 x11      ,   ,   ,   ,    ,   ,   ,    ,   ,   , IF , -  , -  , ID , EX , MEM, WB , 

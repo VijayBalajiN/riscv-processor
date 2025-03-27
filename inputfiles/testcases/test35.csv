@@ -1,0 +1,18 @@
+NONFORWARDING:
+
+Instruction Number, C0, C1, C2, C3 , C4 , C5, C6, C7 , C8, C9 , C10, 
+addi x1 x0 1      , IF, ID, EX, MEM, WB , 
+addi x2 x0 1      ,   , IF, ID, EX , MEM, WB, 
+beq x1 x2 8       ,   ,   , IF, ID , -  , - , EX, MEM, WB, 
+addi x0 x0 0      ,   ,   ,   , IF , -  , - , 
+addi x0 x0 0      ,   ,   ,   ,    ,    ,   , IF, ID , EX, MEM, WB , 
+
+
+FORWARDING:
+
+Instruction Number, C0, C1, C2, C3 , C4 , C5, C6 , C7, C8 , C9, 
+addi x1 x0 1      , IF, ID, EX, MEM, WB , 
+addi x2 x0 1      ,   , IF, ID, EX , MEM, WB, 
+beq x1 x2 8       ,   ,   , IF, ID , -  , EX, MEM, WB, 
+addi x0 x0 0      ,   ,   ,   , IF , -  , 
+addi x0 x0 0      ,   ,   ,   ,    ,    , IF, ID , EX, MEM, WB, 

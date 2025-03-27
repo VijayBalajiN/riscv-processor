@@ -119,6 +119,10 @@ protected:
     void run_wb1();
     void print_registers();
     virtual int stall_detector();
+
+    virtual void forwarding_ex();
+    virtual void forwarding_m();
+    virtual void forwarding_wb();
 };
 
 #endif // PROCESSOR_H

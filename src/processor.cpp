@@ -348,6 +348,10 @@ void Processor::run_ex () {
         return;
     }
 
+    forwarding_ex();
+
+
+
     int alu_output;
 
     if (latch_ex_r.use_alu == 1) {
@@ -359,6 +363,7 @@ void Processor::run_ex () {
                 if (funct7 == 0) alu_output = operand1 + operand2;
                 else if (funct7 == 32) alu_output = operand1 - operand2;
                 else {
+                    cout << pretty_instruc[line/4] << endl;
                     printf("Incorrect Code\n");
                     assert(0);
                 }
@@ -409,6 +414,8 @@ void Processor::run_m () {
         return;
     }
 
+    forwarding_m();
+
     int address = latch_m_r.alu_output;
 
     if (latch_m_r.mem_write == 1) {
@@ -433,14 +440,13 @@ void Processor::run_wb () {
         return;
     }
 
-
-
     if (clock_end[line/4] == clock) pretty_instruc[line/4].append("/WB");
     else pretty_instruc[line/4].append(";WB");
     clock_end[line/4] = clock;
 }
 
 void Processor::run_wb1 () {
+    forwarding_wb();
     if (latch_wb_r.control.squash == 0 && latch_wb_r.write_back == 1) {
         registers[latch_wb_r.control.rd] = (unsigned int)latch_wb_r.mem_output;
     }
@@ -460,3 +466,7 @@ void Processor::print_registers() {
     }
     cout << endl;
 }
+
+void Processor::forwarding_ex(){}
+void Processor::forwarding_m(){}
+void Processor::forwarding_wb(){}

@@ -29,7 +29,7 @@ public:
                             (latch_m_r.control.rd == rs1)) ) return 1;
             }
             default:
-                printf("Unknown Opcode\n");
+                break;
         }
         return 0;
         

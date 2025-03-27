@@ -302,8 +302,6 @@ void Processor::run_if() {
             break;
         }
         default:
-            printf("Incorrect Opcode %d %d\n", opcode, line);
-            
             assert(0);
     }
 
@@ -434,7 +432,6 @@ void Processor::run_id () {
                         if (operand1 >= operand2) jump = 1;
                         break;
                     default:
-                        cout << "Incorrect Opcode " << pretty_instruc[line/4] << endl;
                         assert(0);
                 }
 

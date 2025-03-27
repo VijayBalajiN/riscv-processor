@@ -204,7 +204,7 @@ void forwarding_m() override {
 
             
             default:
-                printf("Unknown Opcode\n");
+                break;
         }
         return 0;
         

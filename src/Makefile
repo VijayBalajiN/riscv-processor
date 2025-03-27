@@ -42,10 +42,10 @@ build_n: $(BUILD_DIR)/noforward
 
 # Run targets 
 run_f: $(BUILD_DIR)/forward
-	./$(BUILD_DIR)/forward ../inputfiles/testcases/test15.txt 200
+	./$(BUILD_DIR)/forward ../inputfiles/testcases/test25.txt 200
 
 run_n: $(BUILD_DIR)/noforward
-	./$(BUILD_DIR)/noforward  ../inputfiles/testcases/test15.txt 200
+	./$(BUILD_DIR)/noforward  ../inputfiles/testcases/test25.txt 200
 
 
 # Original targets for backward compatibility

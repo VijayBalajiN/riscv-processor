@@ -40,7 +40,7 @@ run_f: $(BUILD_DIR)/forwarding
 	./$(BUILD_DIR)/forwarding ../inputfiles/testcases/test15.txt 200
 
 run_n: $(BUILD_DIR)/nonforwarding
-	./$(BUILD_DIR)/nonforwarding  ../inputfiles/testcases/test15.txt 200
+	./$(BUILD_DIR)/nonforwarding  ../inputfiles/testcases/test1.txt 20
 
 # Original targets for backward compatibility
 run: $(BUILD_DIR)/forwarding

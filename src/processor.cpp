@@ -493,15 +493,20 @@ void Processor::run_ex () {
         unsigned int funct3 = latch_ex_r.control.funct3;
         unsigned int funct7 = latch_ex_r.control.funct7;
 
+        if (opcode == 55) alu_output = immed << 12;
+        else {
+
         switch(funct3) {
             case 0:
-                if (funct7 == 0) alu_output = operand1 + operand2;
+                if (opcode == I_TYPE3) alu_output = operand1 + operand2;
+                else {if (funct7 == 0) alu_output = operand1 + operand2;
                 else if (funct7 == 32) alu_output = operand1 - operand2;
                 else if (funct7 == 1) alu_output = operand1 * operand2;
                 else {
                     cout << pretty_instruc[line/4] << endl;
                     printf("Incorrect Code\n");
                     assert(0);
+                }
                 }
                 break;
             case 1:
@@ -528,6 +533,7 @@ void Processor::run_ex () {
                 cout << pretty_instruc[line/4] << endl;
                 printf("Incorrect Code\n");
                 assert(0);
+        }
         }
     }
 

@@ -37,10 +37,10 @@ build_n: $(BUILD_DIR)/nonforwarding
 
 # Run targets
 run_f: $(BUILD_DIR)/forwarding
-	./$(BUILD_DIR)/forwarding ../inputfiles/testcases/test1.txt 12
+	./$(BUILD_DIR)/forwarding ../inputfiles/testcases/test28.txt 200
 
 run_n: $(BUILD_DIR)/nonforwarding
-	./$(BUILD_DIR)/nonforwarding 12
+	./$(BUILD_DIR)/nonforwarding  ../inputfiles/testcases/test28.txt 200
 
 # Original targets for backward compatibility
 run: $(BUILD_DIR)/forwarding

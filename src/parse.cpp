@@ -10,7 +10,7 @@ using namespace std;
 
 void readSpace(ifstream& file){
     string temp;
-    while (file.peek()==' '){getline(file, temp, ' ');}
+    while (file.peek()==' ' ){getline(file, temp, ' ');}
 }
 
 void readNext(ifstream& file, string& check, char delim){

@@ -12,13 +12,13 @@ public:
         switch (opcode) {
             case SB_TYPE:  {
                 unsigned int rs1 = latch_id_r.control.rs1;
-                unsigned int rs2 = latch_id_r.control.rs1;
+                unsigned int rs2 = latch_id_r.control.rs2;
                 // mem with or wihtout a gap of one followed by branch 
                 if ( (latch_ex_r.control.squash == 0 && latch_ex_r.control.rd != 0 && latch_ex_r.control.opcode == I_TYPE1 && 
                             (latch_ex_r.control.rd == rs1 || latch_ex_r.control.rd == rs2)) || 
                     (latch_m_r.control.squash == 0 && latch_m_r.control.rd != 0 && latch_m_r.control.opcode == I_TYPE1 && 
                             (latch_m_r.control.rd == rs1 || latch_m_r.control.rd == rs2)) ) return 1;
-
+                
                 // alu (51->r_type 19 -> i_type2 for xori, addi, etc) followed by branch 
                 if ( latch_ex_r.control.squash == 0 && latch_ex_r.control.rd != 0 && ( latch_ex_r.control.opcode == R_TYPE || latch_ex_r.control.opcode == I_TYPE2) && 
                     (latch_ex_r.control.rd == rs1 || latch_ex_r.control.rd == rs2) ) return 1;
@@ -49,7 +49,7 @@ public:
             }
             case R_TYPE:{
                 unsigned int rs1 = latch_id_r.control.rs1;
-                unsigned int rs2 = latch_id_r.control.rs1;
+                unsigned int rs2 = latch_id_r.control.rs2;
                 // alu preceded by mem operation
                 if ( latch_ex_r.control.squash == 0 && latch_ex_r.control.rd != 0 && latch_ex_r.control.opcode == I_TYPE1 && 
                     (latch_ex_r.control.rd == rs1 || latch_ex_r.control.rd == rs2) ) return 1;
@@ -83,8 +83,6 @@ int main (int argc, char * argv[]) {
     }
 
     Processor_Forwarding processor(filename, cycle_count);
-    cout << "hello\n";
     processor.run();
-    cout << "hello2\n";
     processor.print();   
 }

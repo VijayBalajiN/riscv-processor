@@ -1,0 +1,25 @@
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+lw x5 0 x10         ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x6 4 x10         ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x7 0 x11         ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x28 4 x11        ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+sub x5 x7 x5        ;       ;       ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB
+sub x6 x28 x6       ;       ;       ;       ;       ;       ;IF     ;-      ;ID     ;EX     ;MEM    ;WB
+mul x5 x5 x5        ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB
+mul x6 x6 x6        ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;-      ;ID     ;EX     ;MEM    ;WB
+add x5 x5 x6        ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+addi x10 x5 0       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;-      ;-      ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;-      ;-      ;ID     ;IF/EX  ;ID/MEM
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+lw x5 0 x10         ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x6 4 x10         ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x7 0 x11         ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x28 4 x11        ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+sub x5 x7 x5        ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+sub x6 x28 x6       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+mul x5 x5 x5        ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+mul x6 x6 x6        ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+add x5 x5 x6        ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x10 x5 0       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;IF/EX  ;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM

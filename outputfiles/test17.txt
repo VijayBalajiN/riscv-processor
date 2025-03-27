@@ -1,0 +1,17 @@
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+lb x5 0 x11         ;IF     ;ID     ;EX     ;MEM    ;WB
+sb x5 0 x10         ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+beq x5 x0 16        ;       ;       ;IF     ;-      ;-      ;ID     ;EX     ;MEM    ;WB
+addi x10 x10 1      ;       ;       ;       ;       ;       ;IF
+addi x11 x11 1
+jal x0 -20 <stringcopy>
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;IF/EX  ;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+lb x5 0 x11         ;IF     ;ID     ;EX     ;MEM    ;WB
+sb x5 0 x10         ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+beq x5 x0 16        ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB
+addi x10 x10 1      ;       ;       ;       ;IF     ;-
+addi x11 x11 1
+jal x0 -20 <stringcopy>
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;IF     ;ID     ;IF/EX  ;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX

@@ -1,0 +1,17 @@
+NONFORWARDING
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     
+addi x11 x0 1       ;IF     ;ID     ;EX     ;MEM    ;WB
+jal x1 8            ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x1 x2 3        ;       ;       ;IF
+addi x6 x7 6        ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x1 x1 1        ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+
+FORWARDING
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     
+addi x11 x0 1       ;IF     ;ID     ;EX     ;MEM    ;WB
+jal x1 8            ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x1 x2 3        ;       ;       ;IF
+addi x6 x7 6        ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x1 x1 1        ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB

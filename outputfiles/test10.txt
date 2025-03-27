@@ -1,0 +1,9 @@
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     
+addi x2 x0 7        ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x3 5(x2)         ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+add x2 x2 x3        ;       ;       ;IF     ;-      ;-      ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      
+addi x2 x0 7        ;IF     ;ID     ;EX     ;MEM    ;WB
+lw x3 5(x2)         ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+add x2 x2 x3        ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB

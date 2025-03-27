@@ -1,0 +1,25 @@
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+addi x5 x0 0        ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x6 x0 0        ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+bge x6 x11 28       ;       ;       ;IF     ;ID     ;-      ;-      ;EX     ;MEM    ;WB
+slli x7 x6 2        ;       ;       ;       ;IF     ;-      ;-
+add x7 x10 x7
+lw x7 0 x7
+add x5 x5 x7
+addi x6 x6 1
+jal x0 -24
+addi x10 x5 0       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;IF/EX  ;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX
+
+Instruction          C1      C2      C3      C4      C5      C6      C7      C8      C9      C10     C11     C12     C13     C14     C15     C16     C17     C18     C19     C20     C21     
+addi x5 x0 0        ;IF     ;ID     ;EX     ;MEM    ;WB
+addi x6 x0 0        ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+bge x6 x11 28       ;       ;       ;IF     ;ID     ;-      ;EX     ;MEM    ;WB
+slli x7 x6 2        ;       ;       ;       ;IF     ;-
+add x7 x10 x7
+lw x7 0 x7
+add x5 x5 x7
+addi x6 x6 1
+jal x0 -24
+addi x10 x5 0       ;       ;       ;       ;       ;       ;IF     ;ID     ;EX     ;MEM    ;WB
+jalr x0 x1 0        ;       ;       ;       ;       ;       ;       ;IF     ;ID     ;IF/EX  ;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM ;IF/WB/EX;ID/MEM

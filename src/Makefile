@@ -40,7 +40,7 @@ $(BUILD_DIR)/parse.o: parse.cpp parse.h | $(BUILD_DIR)
 build_f: $(BUILD_DIR)/forward
 build_n: $(BUILD_DIR)/noforward
 
-# Run targets
+# Run targets 
 run_f: $(BUILD_DIR)/forward
 	./$(BUILD_DIR)/forward ../inputfiles/testcases/test15.txt 200
 

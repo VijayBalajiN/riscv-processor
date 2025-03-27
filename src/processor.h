@@ -47,6 +47,9 @@ typedef struct latch_if {
 typedef struct latch_id {
     control_signals control;
     int stall;
+
+    int operand1;
+    int operand2;
 }latch_id;
 
 typedef struct latch_ex {
@@ -122,7 +125,7 @@ protected:
 
     virtual void forwarding_ex();
     virtual void forwarding_m();
-    virtual void forwarding_wb();
+    virtual void forwarding_id();
 };
 
 #endif // PROCESSOR_H
